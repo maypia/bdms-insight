@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DepartmentsIndexRouteImport } from './routes/departments/index'
 import { Route as DepartmentsIdRouteImport } from './routes/departments/$id'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KnowledgeRoute = KnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/knowledge': typeof KnowledgeRoute
+  '/login': typeof LoginRoute
   '/departments/$id': typeof DepartmentsIdRoute
   '/departments/': typeof DepartmentsIndexRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/knowledge': typeof KnowledgeRoute
+  '/login': typeof LoginRoute
   '/departments/$id': typeof DepartmentsIdRoute
   '/departments': typeof DepartmentsIndexRoute
 }
@@ -60,6 +68,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/knowledge': typeof KnowledgeRoute
+  '/login': typeof LoginRoute
   '/departments/$id': typeof DepartmentsIdRoute
   '/departments/': typeof DepartmentsIndexRoute
 }
@@ -69,15 +78,23 @@ export interface FileRouteTypes {
     | '/'
     | '/assistant'
     | '/knowledge'
+    | '/login'
     | '/departments/$id'
     | '/departments/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assistant' | '/knowledge' | '/departments/$id' | '/departments'
+  to:
+    | '/'
+    | '/assistant'
+    | '/knowledge'
+    | '/login'
+    | '/departments/$id'
+    | '/departments'
   id:
     | '__root__'
     | '/'
     | '/assistant'
     | '/knowledge'
+    | '/login'
     | '/departments/$id'
     | '/departments/'
   fileRoutesById: FileRoutesById
@@ -86,12 +103,20 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssistantRoute: typeof AssistantRoute
   KnowledgeRoute: typeof KnowledgeRoute
+  LoginRoute: typeof LoginRoute
   DepartmentsIdRoute: typeof DepartmentsIdRoute
   DepartmentsIndexRoute: typeof DepartmentsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/knowledge': {
       id: '/knowledge'
       path: '/knowledge'
@@ -134,6 +159,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssistantRoute: AssistantRoute,
   KnowledgeRoute: KnowledgeRoute,
+  LoginRoute: LoginRoute,
   DepartmentsIdRoute: DepartmentsIdRoute,
   DepartmentsIndexRoute: DepartmentsIndexRoute,
 }
