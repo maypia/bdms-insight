@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DepartmentsIndexRouteImport } from './routes/departments/index'
 import { Route as DepartmentsIdRouteImport } from './routes/departments/$id'
 
+const KnowledgeRoute = KnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,36 +37,47 @@ const DepartmentsIdRoute = DepartmentsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/knowledge': typeof KnowledgeRoute
   '/departments/$id': typeof DepartmentsIdRoute
   '/departments/': typeof DepartmentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/knowledge': typeof KnowledgeRoute
   '/departments/$id': typeof DepartmentsIdRoute
   '/departments': typeof DepartmentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/knowledge': typeof KnowledgeRoute
   '/departments/$id': typeof DepartmentsIdRoute
   '/departments/': typeof DepartmentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/departments/$id' | '/departments/'
+  fullPaths: '/' | '/knowledge' | '/departments/$id' | '/departments/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/departments/$id' | '/departments'
-  id: '__root__' | '/' | '/departments/$id' | '/departments/'
+  to: '/' | '/knowledge' | '/departments/$id' | '/departments'
+  id: '__root__' | '/' | '/knowledge' | '/departments/$id' | '/departments/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  KnowledgeRoute: typeof KnowledgeRoute
   DepartmentsIdRoute: typeof DepartmentsIdRoute
   DepartmentsIndexRoute: typeof DepartmentsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/knowledge': {
+      id: '/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof KnowledgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  KnowledgeRoute: KnowledgeRoute,
   DepartmentsIdRoute: DepartmentsIdRoute,
   DepartmentsIndexRoute: DepartmentsIndexRoute,
 }
