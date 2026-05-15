@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
+import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DepartmentsIndexRouteImport } from './routes/departments/index'
 import { Route as DepartmentsIdRouteImport } from './routes/departments/$id'
@@ -17,6 +18,11 @@ import { Route as DepartmentsIdRouteImport } from './routes/departments/$id'
 const KnowledgeRoute = KnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssistantRoute = AssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,12 +43,14 @@ const DepartmentsIdRoute = DepartmentsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
   '/knowledge': typeof KnowledgeRoute
   '/departments/$id': typeof DepartmentsIdRoute
   '/departments/': typeof DepartmentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
   '/knowledge': typeof KnowledgeRoute
   '/departments/$id': typeof DepartmentsIdRoute
   '/departments': typeof DepartmentsIndexRoute
@@ -50,20 +58,33 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
   '/knowledge': typeof KnowledgeRoute
   '/departments/$id': typeof DepartmentsIdRoute
   '/departments/': typeof DepartmentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/knowledge' | '/departments/$id' | '/departments/'
+  fullPaths:
+    | '/'
+    | '/assistant'
+    | '/knowledge'
+    | '/departments/$id'
+    | '/departments/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/knowledge' | '/departments/$id' | '/departments'
-  id: '__root__' | '/' | '/knowledge' | '/departments/$id' | '/departments/'
+  to: '/' | '/assistant' | '/knowledge' | '/departments/$id' | '/departments'
+  id:
+    | '__root__'
+    | '/'
+    | '/assistant'
+    | '/knowledge'
+    | '/departments/$id'
+    | '/departments/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AssistantRoute: typeof AssistantRoute
   KnowledgeRoute: typeof KnowledgeRoute
   DepartmentsIdRoute: typeof DepartmentsIdRoute
   DepartmentsIndexRoute: typeof DepartmentsIndexRoute
@@ -76,6 +97,13 @@ declare module '@tanstack/react-router' {
       path: '/knowledge'
       fullPath: '/knowledge'
       preLoaderRoute: typeof KnowledgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assistant': {
+      id: '/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -104,6 +132,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AssistantRoute: AssistantRoute,
   KnowledgeRoute: KnowledgeRoute,
   DepartmentsIdRoute: DepartmentsIdRoute,
   DepartmentsIndexRoute: DepartmentsIndexRoute,
