@@ -57,57 +57,57 @@ function DepartmentDetail() {
       </Link>
 
       {/* Header */}
-      <div className="rounded-2xl bg-card border border-border shadow-[var(--shadow-soft)] p-6 mb-6">
-        <div className="flex items-start gap-5">
-          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-[oklch(0.5_0.18_255)] text-primary-foreground grid place-items-center text-lg font-semibold shadow-[var(--shadow-glow)]">
+      <div className="rounded-2xl bg-card border border-border shadow-[var(--shadow-soft)] p-6 mb-6 animate-fade-in-up">
+        <div className="flex flex-col md:flex-row items-start gap-6">
+          <div className="h-16 w-16 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 font-mono font-extrabold text-xl grid place-items-center shadow-sm shrink-0">
             {dept.code}
           </div>
           <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight">{dept.name}</h1>
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-success/10 text-success">
-                <span className="h-1.5 w-1.5 rounded-full bg-success" />
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{dept.name}</h1>
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded border bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/50">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 {dept.status}
               </span>
             </div>
-            <p className="text-sm text-muted-foreground mt-1.5 max-w-2xl">{dept.description}</p>
-            <div className="flex items-center gap-5 mt-4 text-sm text-muted-foreground flex-wrap">
-              <div className="inline-flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                {dept.manager}
+            <p className="text-xs md:text-sm text-muted-foreground mt-2 max-w-2xl leading-relaxed">{dept.description}</p>
+            <div className="flex items-center gap-5 mt-4 text-[11px] font-medium text-slate-500 dark:text-slate-400 flex-wrap">
+              <div className="inline-flex items-center gap-1.5">
+                <Users className="h-3.5 w-3.5 text-slate-400" />
+                <span>Manager: <span className="font-semibold text-slate-700 dark:text-slate-300">{dept.manager}</span></span>
               </div>
-              <div className="inline-flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                {dept.contact}
+              <div className="inline-flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5 text-slate-400" />
+                <span className="font-mono">{dept.contact}</span>
               </div>
-              <div className="inline-flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                {dept.managerEmail}
+              <div className="inline-flex items-center gap-1.5">
+                <Mail className="h-3.5 w-3.5 text-slate-400" />
+                <span>{dept.managerEmail}</span>
               </div>
-              <div className="inline-flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Updated {dept.updatedAt}
+              <div className="inline-flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                <span>Updated {dept.updatedAt}</span>
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full md:w-auto mt-4 md:mt-0">
             <Link
               to="/assistant"
               search={{ dept: dept.id } as never}
-              className="h-10 px-4 inline-flex items-center gap-2 rounded-lg bg-primary-soft text-primary text-sm font-medium hover:bg-primary/15"
+              className="flex-1 md:flex-none h-9 px-4 inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-50 border border-slate-200/80 hover:bg-slate-100 text-slate-700 dark:bg-slate-800/40 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300 text-xs font-semibold shadow-sm active:scale-[0.98] transition-all duration-200"
             >
               Ask AI about {dept.code}
             </Link>
-            <button className="h-10 px-4 inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-95 shadow-[var(--shadow-soft)]">
-              <Pencil className="h-4 w-4" /> Edit
+            <button className="flex-1 md:flex-none h-9 px-4 inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.98] dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 transition-all duration-200 text-xs font-semibold shadow-sm">
+              <Pencil className="h-3.5 w-3.5" /> Edit Wiki
             </button>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="rounded-2xl bg-card border border-border shadow-[var(--shadow-soft)]">
-        <div className="border-b border-border px-3 flex items-center gap-1 overflow-x-auto">
+      <div className="rounded-2xl bg-card border border-border shadow-[var(--shadow-soft)] overflow-hidden">
+        <div className="border-b border-border px-3 flex items-center gap-1 overflow-x-auto bg-slate-50/30 dark:bg-slate-900/5">
           {tabs.map((t) => {
             const Icon = t.icon;
             const isActive = active === t.id;
@@ -115,13 +115,13 @@ function DepartmentDetail() {
               <button
                 key={t.id}
                 onClick={() => setActive(t.id)}
-                className={`relative inline-flex items-center gap-2 px-4 py-3.5 text-sm font-medium transition whitespace-nowrap ${
-                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                className={`relative inline-flex items-center gap-1.5 px-4 py-3 text-xs font-semibold transition whitespace-nowrap ${
+                  isActive ? "text-slate-900 dark:text-white" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-3.5 w-3.5" />
                 {t.label}
-                {isActive && <span className="absolute left-3 right-3 -bottom-px h-0.5 bg-primary rounded-full" />}
+                {isActive && <span className="absolute left-3 right-3 -bottom-px h-0.5 bg-blue-500 rounded-full" />}
               </button>
             );
           })}
