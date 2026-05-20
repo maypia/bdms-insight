@@ -30,3 +30,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Turborepo
+.turbo/
+
+# Bun and Package Manager locks
+bun.lockb
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Database and Environment
+.env
+.env.*
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
