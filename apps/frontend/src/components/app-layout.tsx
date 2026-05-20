@@ -33,21 +33,23 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex bg-background">
       {/* Sidebar */}
-      <aside className="w-64 shrink-0 border-r border-sidebar-border bg-sidebar flex flex-col">
-        <div className="px-5 pt-6 pb-5">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-primary text-primary-foreground grid place-items-center shadow-[var(--shadow-glow)]">
+      <aside className="w-64 shrink-0 border-r border-slate-200/60 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/10 flex flex-col sticky top-0 h-screen">
+        {/* Sidebar Logo Header */}
+        <div className="px-6 pt-6 pb-5">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl bg-blue-600 text-white border border-blue-500/30 flex items-center justify-center shadow-sm shrink-0">
               <Stethoscope className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-[15px] font-semibold tracking-tight text-sidebar-foreground">BDMS</div>
-              <div className="text-[11px] text-muted-foreground -mt-0.5">Department Assistant</div>
+              <div className="text-[13px] font-extrabold tracking-wider text-slate-900 dark:text-white font-sans uppercase">BDMS</div>
+              <div className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest -mt-0.5">Insight Portal</div>
             </div>
           </Link>
         </div>
 
-        <nav className="px-3 flex-1">
-          <div className="text-[10px] font-semibold tracking-wider text-muted-foreground px-3 mb-2 uppercase">
+        {/* Navigation items */}
+        <nav className="px-3.5 flex-1">
+          <div className="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 px-3 mb-2">
             Workspace
           </div>
           <ul className="space-y-1">
@@ -58,16 +60,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <li key={item.to}>
                   <Link
                     to={item.to}
-                    className={`group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    className={`group flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-semibold transition-all border ${
                       active
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-[var(--shadow-soft)]"
-                        : "text-sidebar-foreground/75 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
+                        ? "bg-white border-slate-200/60 text-slate-900 shadow-sm dark:bg-slate-800/60 dark:border-slate-700 dark:text-white"
+                        : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800/20"
                     }`}
                   >
-                    <Icon className={`h-[18px] w-[18px] ${active ? "text-primary" : ""}`} />
+                    <Icon className={`h-4.5 w-4.5 transition-colors ${active ? "text-blue-500 dark:text-blue-400" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600"}`} />
                     <span className="flex-1">{item.label}</span>
                     {item.badge && (
-                      <span className="text-[10px] font-semibold tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                      <span className="text-[9px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40 uppercase animate-pulse-subtle">
                         {item.badge}
                       </span>
                     )}
@@ -77,7 +79,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             })}
           </ul>
 
-          <div className="text-[10px] font-semibold tracking-wider text-muted-foreground px-3 mt-7 mb-2 uppercase">
+          <div className="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 px-3 mt-7 mb-2">
             System
           </div>
           <ul className="space-y-1">
@@ -87,9 +89,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <li key={item.to}>
                   <Link
                     to={item.to}
-                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-sidebar-foreground/75 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
+                    className="group flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800/20 border border-transparent transition-all"
                   >
-                    <Icon className="h-[18px] w-[18px]" />
+                    <Icon className="h-4.5 w-4.5 text-slate-400 dark:text-slate-500 group-hover:text-slate-600" />
                     <span>{item.label}</span>
                   </Link>
                 </li>
@@ -98,48 +100,54 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </ul>
         </nav>
 
-        <div className="p-3 border-t border-sidebar-border">
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent/60">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground grid place-items-center text-xs font-semibold">
+        {/* Sidebar Footer (Doctor / User profile card) */}
+        <div className="p-3.5 border-t border-slate-200/60 dark:border-slate-800/60">
+          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/20 transition-all duration-200 group">
+            <div className="h-8.5 w-8.5 rounded-xl bg-blue-600 text-white border border-blue-500/30 font-mono font-bold text-xs grid place-items-center shadow-sm shrink-0">
               {currentUser.initials}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium text-sidebar-foreground truncate">{currentUser.name}</div>
-              <div className="text-[11px] text-muted-foreground capitalize">{currentUser.role}</div>
+              <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{currentUser.name}</div>
+              <div className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{currentUser.role}</div>
             </div>
-            <Link to="/login" className="text-muted-foreground hover:text-foreground" aria-label="Sign out">
+            <Link to="/login" className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="Sign out">
               <LogOut className="h-4 w-4" />
             </Link>
           </div>
         </div>
       </aside>
 
-      {/* Main */}
+      {/* Main Container */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-border bg-surface/80 backdrop-blur supports-[backdrop-filter]:bg-surface/60 flex items-center px-8 gap-4 sticky top-0 z-20">
+        {/* Top Header */}
+        <header className="h-16 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-950/40 backdrop-blur-md flex items-center px-8 gap-4 sticky top-0 z-20">
+          {/* Header Search */}
           <div className="relative flex-1 max-w-xl">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <input
               type="search"
-              placeholder="Search departments, FAQs, documents…"
-              className="w-full h-10 pl-10 pr-4 rounded-lg bg-surface-muted border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/40 focus:border-ring/60 transition"
+              placeholder="Search clinical departments, SOPs, FAQs..."
+              className="w-full h-8.5 pl-9 pr-4 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-slate-900 dark:bg-slate-800/40 dark:border-slate-700 dark:focus:ring-white transition-all"
             />
-            <kbd className="hidden md:inline-flex absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-muted-foreground border border-border rounded px-1.5 py-0.5 bg-surface">
+            <kbd className="hidden md:inline-flex absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] font-bold font-mono text-slate-400 border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5 bg-white dark:bg-slate-800">
               ⌘K
             </kbd>
           </div>
-          <button className="h-10 w-10 grid place-items-center rounded-lg hover:bg-surface-muted text-muted-foreground hover:text-foreground transition">
-            <Bell className="h-[18px] w-[18px]" />
+          
+          <button className="h-8.5 w-8.5 grid place-items-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+            <Bell className="h-4.5 w-4.5" />
           </button>
+          
           <Link
             to="/assistant"
-            className="hidden md:inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-95 shadow-[var(--shadow-soft)]"
+            className="hidden md:inline-flex items-center gap-1.5 h-8.5 px-4 rounded-lg bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 text-xs font-semibold shadow-sm"
           >
-            <Sparkles className="h-4 w-4" />
+            <Sparkles className="h-3.5 w-3.5" />
             Ask AI
           </Link>
         </header>
 
+        {/* Main Content Area */}
         <main className="flex-1 px-8 py-8">{children}</main>
       </div>
     </div>
