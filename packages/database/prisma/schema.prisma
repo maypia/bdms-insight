@@ -1,0 +1,124 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  EMPLOYEE
+  DEPARTMENT_HEAD
+  AP_CLERK
+  AUDITOR
+  SYSTEM_ADMIN
+}
+
+// 1. Departments Model
+model Department {
+  departmentId   String     @id @default(uuid()) @map("department_id")
+  departmentName String     @map("department_name")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  employees      Employee[]
+
+  @@map("Departments")
+}
+
+// 2. Employees Model
+model Employee {
+  employeeId   String         @id @default(uuid()) @map("employee_id")
+  firstName    String         @map("first_name")
+  lastName     String         @map("last_name")
+  departmentId String         @map("department_id")
+  department   Department     @relation(fields: [departmentId], references: [departmentId])
+  phoneNumber  String?        @map("phone_number")
+  email        String         @unique @map("email")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  claims       ExpenseClaim[]
+
+  @@map("Employees")
+}
+
+// 3. Expense Claims (Self-Referencing for Clearance Flows)
+model ExpenseClaim {
+  claimId         String             @id @default(uuid()) @map("claim_id")
+  employeeId      String             @map("employee_id")
+  employee        Employee           @relation(fields: [employeeId], references: [employeeId])
+  claimType       String             @map("claim_type") // e.g., "PETTY_CASH", "TE-ADVANCE", "TE_Clear"
+  amount          Decimal            @db.Decimal(10, 2)
+  description     String
+  status          String             @default("PENDING") // e.g., "PENDING", "APPROVED", "CLEARED", "REJECTED"
+  
+  // Self-referencing link to reconcile clearances with advance payments
+  parentAdvanceId String?            @map("parent_advance_id")
+  parentAdvance   ExpenseClaim?      @relation("ClaimClearance", fields: [parentAdvanceId], references: [claimId])
+  clearanceClaims ExpenseClaim[]     @relation("ClaimClearance")
+  
+  checklists      ExpenseChecklist[]
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+
+  @@map("Expense_Claims")
+}
+
+// 4. Expense Checklists Model
+model ExpenseChecklist {
+  expCheckId    String       @id @default(uuid()) @map("exp_check_id")
+  claimId       String       @map("claim_id")
+  claim         ExpenseClaim @relation(fields: [claimId], references: [claimId], onDelete: Cascade)
+  documentType  String       @map("document_type")
+  pdfStorageUrl String       @map("pdf_storage_url")
+
+  @@map("Expense_Checklists")
+}
+
+// 5. Invoices Model with HL7 FHIR reference hooks
+model Invoice {
+  invoiceId       String            @id @default(uuid()) @map("invoice_id")
+  vendorName      String            @map("vendor_name")
+  invoiceNumber   String            @unique @map("invoice_number")
+  jobType         String            @map("job_type")
+  netAmount       Decimal           @db.Decimal(12, 2) @map("net_amount")
+  dueDate         DateTime          @map("due_date")
+  status          String            @default("PENDING")
+  fhirReferenceId String?           @map("fhir_reference_id") // FHIR clinical billing resource link
+
+  paymentSchedule PaymentSchedule?
+  checklists      InvoiceChecklist[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  @@map("Invoices")
+}
+
+// 6. Payment Schedules Model
+model PaymentSchedule {
+  scheduleId    String   @id @default(uuid()) @map("schedule_id")
+  invoiceId     String   @unique @map("invoice_id")
+  invoice       Invoice  @relation(fields: [invoiceId], references: [invoiceId], onDelete: Cascade)
+  paymentMethod String   @map("payment_method") // e.g., "BANK_TRANSFER", "CHEQUE"
+  actionDate    DateTime @map("action_date")
+  timeSlot      String   @map("time_slot")
+  contactPhone  String   @map("contact_phone")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("Payment_Schedules")
+}
+
+// 7. Invoice Checklists Model
+model InvoiceChecklist {
+  checklistId   String   @id @default(uuid()) @map("checklist_id")
+  invoiceId     String   @map("invoice_id")
+  invoice       Invoice  @relation(fields: [invoiceId], references: [invoiceId], onDelete: Cascade)
+  documentType  String   @map("document_type")
+  status        String   @default("PENDING") // e.g., "VERIFIED", "FAILED", "PENDING"
+  pdfStorageUrl String   @map("pdf_storage_url")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("Invoice_Checklists")
+}

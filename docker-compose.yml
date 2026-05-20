@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # Database Service with pgvector capabilities
+  postgres:
+    image: ankane/pgvector:v0.5.1
+    container_name: hospital_ap_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: hospital_ap_db
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: secure_db_password123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin_user -d hospital_ap_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hospital_network
+
+  # Mock S3 Cloud Storage locally (LocalStack)
+  localstack:
+    image: localstack/localstack:latest
+    container_name: hospital_ap_localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - AWS_DEFAULT_REGION=ap-southeast-1
+    volumes:
+      - localstack_data:/var/lib/localstack
+    networks:
+      - hospital_network
+
+  # Core Node.js API Service
+  backend-node:
+    build:
+      context: .
+      dockerfile: apps/backend-node/Dockerfile
+    container_name: hospital_ap_node_backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://admin_user:secure_db_password123@postgres:5432/hospital_ap_db?schema=public
+      - JWT_SECRET=super_secret_hospital_jwt_signing_key_99923
+      - AWS_ACCESS_KEY_ID=mock-key
+      - AWS_SECRET_ACCESS_KEY=mock-secret
+      - AWS_S3_BUCKET_NAME=hospital-invoices-bucket
+      - AWS_S3_ENDPOINT=http://localstack:4566
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_started
+    networks:
+      - hospital_network
+
+  # Python AI Chatbot & RAG Engine
+  backend-python:
+    build:
+      context: .
+      dockerfile: apps/backend-python/Dockerfile
+    container_name: hospital_ap_python_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=hospital_ap_db
+      - DB_USER=admin_user
+      - DB_PASSWORD=secure_db_password123
+      - OPENAI_API_KEY=mock_or_real_key_for_embeddings
+      - AWS_S3_ENDPOINT=http://localstack:4566
+      - AWS_S3_BUCKET_NAME=hospital-invoices-bucket
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - hospital_network
+
+  # Frontend SPA Service (Vite + React)
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    container_name: hospital_ap_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend-node
+      - backend-python
+    networks:
+      - hospital_network
+
+volumes:
+  postgres_data:
+    driver: local
+  localstack_data:
+    driver: local
+
+networks:
+  hospital_network:
+    driver: bridge
